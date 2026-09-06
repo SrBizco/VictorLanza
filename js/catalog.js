@@ -154,16 +154,19 @@ function toggleCart(cart, product) {
     : addToCart(cart, product);
 }
 
-function buildWhatsAppUrl(cart, phoneNumber) {
+function buildWhatsAppUrl(cart, phoneNumber, language = 'es') {
   if (cart.length === 0) return null;
 
+  const translate = globalThis.i18nStore?.getText;
+  const greeting = translate?.(language, 'whatsapp.greeting') ?? 'Hola, quisiera consultar por estos modelos:';
+  const question = translate?.(language, 'whatsapp.question') ?? '¿Me indicás precio, color y medida disponible para cada uno?';
   const selectedModels = cart.map((product) => `- ${product.name}`).join('\n');
   const message = [
-    'Hola, quisiera consultar por estos modelos:',
+    greeting,
     '',
     selectedModels,
     '',
-    '¿Me indicás precio, color y medida disponible para cada uno?',
+    question,
   ].join('\n');
   return `https://wa.me/${phoneNumber.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
 }

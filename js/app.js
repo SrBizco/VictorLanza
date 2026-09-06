@@ -1,4 +1,5 @@
 const { buildWhatsAppUrl, products, removeFromCart, toggleCart } = globalThis.catalogStore;
+const { getProductText, getText, supportedLanguages } = globalThis.i18nStore;
 
 const catalogGrid = document.querySelector('#catalog-grid');
 const cartItems = document.querySelector('#cart-items');
@@ -18,6 +19,7 @@ const galleryThumbnails = document.querySelector('#gallery-thumbnails');
 const galleryClose = document.querySelector('.gallery-close');
 const toast = document.querySelector('#toast');
 const filters = [...document.querySelectorAll('[data-filter]')];
+const languageButtons = [...document.querySelectorAll('[data-language]')];
 const whatsappNumber = document.body.dataset.whatsappPhone;
 
 let selectedFilter = 'all';
@@ -25,6 +27,35 @@ let cart = [];
 let activeGalleryProduct = null;
 let activeGalleryIndex = 0;
 let toastTimeout;
+let language = supportedLanguages.includes(localStorage.getItem('victor-lanza-language'))
+  ? localStorage.getItem('victor-lanza-language')
+  : 'es';
+
+function t(key) {
+  return getText(language, key);
+}
+
+function localizedProduct(product, field) {
+  return getProductText(language, product.id, field) ?? product[field];
+}
+
+function renderStaticCopy() {
+  document.documentElement.lang = language;
+  document.querySelectorAll('[data-i18n]').forEach((element) => {
+    element.textContent = t(element.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-content]').forEach((element) => {
+    element.content = t(element.dataset.i18nContent);
+  });
+  document.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
+    element.setAttribute('aria-label', t(element.dataset.i18nAriaLabel));
+  });
+  languageButtons.forEach((button) => {
+    const selected = button.dataset.language === language;
+    button.classList.toggle('is-active', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
+}
 
 function galleryMedia(product) {
   const photos = product.gallery.map((file) => ({ type: 'image', src: `assets/gallery/${file}` }));
@@ -36,15 +67,15 @@ function productCard(product) {
   const isSelected = cart.some((item) => item.id === product.id);
   return `
     <article class="product-card">
-      <button class="product-photo-button" type="button" data-open-gallery="${product.id}" aria-label="Ver fotos de ${product.name}">
-        <img src="${product.image}" alt="Modelo ${product.name} de correa de reloj" loading="lazy" />
-        <span>${mediaCount} ${mediaCount === 1 ? 'vista' : 'vistas'} · Ver galería</span>
+      <button class="product-photo-button" type="button" data-open-gallery="${product.id}" aria-label="${t('product.gallery')} ${product.name}">
+        <img src="${product.image}" alt="${product.name}" loading="lazy" />
+        <span>${mediaCount} ${mediaCount === 1 ? t('product.view') : t('product.views')} · ${t('product.gallery')}</span>
       </button>
       <div class="product-content">
-        <p class="product-category">${product.category}</p>
+        <p class="product-category">${t(`category.${product.category}`)}</p>
         <h3>${product.name}</h3>
-        <p>${product.description}</p>
-        <button class="add-button${isSelected ? ' is-selected' : ''}" type="button" data-add-product="${product.id}">${isSelected ? 'Agregado a consulta' : 'Agregar a consulta'} <span aria-hidden="true">${isSelected ? '✓' : '+'}</span></button>
+        <p>${localizedProduct(product, 'description')}</p>
+        <button class="add-button${isSelected ? ' is-selected' : ''}" type="button" data-add-product="${product.id}">${isSelected ? t('product.added') : t('product.add')} <span aria-hidden="true">${isSelected ? '✓' : '+'}</span></button>
       </div>
     </article>
   `;
@@ -65,7 +96,7 @@ function renderCart() {
   emptyCart.hidden = count > 0;
   whatsappButton.disabled = count === 0;
   cartItems.innerHTML = cart.map((product) => `
-    <li><span>${product.name}</span><button type="button" data-remove-product="${product.id}" aria-label="Quitar ${product.name}">×</button></li>
+    <li><span>${product.name}</span><button type="button" data-remove-product="${product.id}" aria-label="${t('cart.remove')} ${product.name}">×</button></li>
   `).join('');
 }
 
@@ -99,11 +130,11 @@ function renderGallery() {
   const current = media[activeGalleryIndex];
   galleryTitle.textContent = activeGalleryProduct.name;
   galleryStage.innerHTML = current.type === 'video'
-    ? `<video controls autoplay src="${current.src}">Tu navegador no puede reproducir este video.</video>`
-    : `<img src="${current.src}" alt="${activeGalleryProduct.name}, imagen ${activeGalleryIndex + 1}" />`;
+    ? `<video controls autoplay src="${current.src}"></video>`
+    : `<img src="${current.src}" alt="${activeGalleryProduct.name}, ${t('gallery.viewImage').toLowerCase()} ${activeGalleryIndex + 1}" />`;
   galleryThumbnails.innerHTML = media.map((item, index) => `
-    <button class="gallery-thumbnail${index === activeGalleryIndex ? ' is-active' : ''}" type="button" data-gallery-index="${index}" aria-label="${item.type === 'video' ? 'Ver video' : `Ver imagen ${index + 1}`}">
-      ${item.type === 'video' ? '<span class="video-thumb">▶ Video</span>' : `<img src="${item.src}" alt="" />`}
+    <button class="gallery-thumbnail${index === activeGalleryIndex ? ' is-active' : ''}" type="button" data-gallery-index="${index}" aria-label="${item.type === 'video' ? t('gallery.viewVideo') : `${t('gallery.viewImage')} ${index + 1}`}">
+      ${item.type === 'video' ? `<span class="video-thumb">▶ ${t('gallery.viewVideo')}</span>` : `<img src="${item.src}" alt="" />`}
     </button>
   `).join('');
 }
@@ -129,7 +160,7 @@ catalogGrid.addEventListener('click', (event) => {
   renderCart();
   renderCatalog();
   bumpCart();
-  showToast(alreadyAdded ? `${product.name} se quitó de la consulta.` : `${product.name} se agregó a la consulta.`);
+  showToast(`${product.name} ${alreadyAdded ? t('toast.removed') : t('toast.added')}`);
 });
 
 cartItems.addEventListener('click', (event) => {
@@ -164,9 +195,21 @@ filters.forEach((filter) => {
 closeCart.addEventListener('click', closeCartDrawer);
 
 whatsappButton.addEventListener('click', () => {
-  const url = buildWhatsAppUrl(cart, whatsappNumber);
+  const url = buildWhatsAppUrl(cart, whatsappNumber, language);
   if (url) window.open(url, '_blank', 'noopener');
 });
 
+languageButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    language = button.dataset.language;
+    localStorage.setItem('victor-lanza-language', language);
+    renderStaticCopy();
+    renderCatalog();
+    renderCart();
+    if (activeGalleryProduct) renderGallery();
+  });
+});
+
+renderStaticCopy();
 renderCatalog();
 renderCart();

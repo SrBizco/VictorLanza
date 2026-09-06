@@ -6,137 +6,144 @@
     <meta
       name="description"
       content="Correas de reloj en cuero vacuno. Consultá color, medida y disponibilidad por WhatsApp."
+      data-i18n-content="meta.description"
     />
-    <title>Victor Lanza | Correas de cuero</title>
+    <title data-i18n="document.title">Victor Lanza | Correas de cuero</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/styles.css" />
+    <script defer src="js/i18n.js"></script>
     <script defer src="js/catalog.js"></script>
     <script defer src="js/app.js"></script>
   </head>
   <body data-whatsapp-phone="5491125531967">
     <header class="site-header">
-      <a class="wordmark" href="#inicio" aria-label="Ir al inicio">VÍCTOR LANZA <span>CORREAS DE CUERO · DESDE 1987</span></a>
+      <div class="language-selector" aria-label="Seleccionar idioma">
+        <button class="language-button is-active" type="button" data-language="es" aria-pressed="true" title="Español"><span class="flag flag-ar" aria-hidden="true"></span><span class="visually-hidden">Español</span></button>
+        <button class="language-button" type="button" data-language="en" aria-pressed="false" title="English"><span class="flag flag-us" aria-hidden="true"></span><span class="visually-hidden">English</span></button>
+        <button class="language-button" type="button" data-language="pt-BR" aria-pressed="false" title="Português do Brasil"><span class="flag flag-br" aria-hidden="true"></span><span class="visually-hidden">Português do Brasil</span></button>
+      </div>
+      <a class="wordmark" href="#inicio" aria-label="Ir al inicio">VÍCTOR LANZA <span data-i18n="brand.tagline">CORREAS DE CUERO · DESDE 1987</span></a>
       <nav aria-label="Navegación principal">
-        <a href="#catalogo">Catálogo</a>
-        <a href="#experiencia">Experiencia</a>
-        <button class="header-cart" id="header-cart" type="button">Consulta <span id="header-cart-count">0</span></button>
+        <a href="#catalogo" data-i18n="nav.catalog">Catálogo</a>
+        <a href="#experiencia" data-i18n="nav.experience">Experiencia</a>
+        <button class="header-cart" id="header-cart" type="button"><span data-i18n="cart.consultation">Consulta</span> <span id="header-cart-count">0</span></button>
       </nav>
     </header>
 
     <main id="inicio">
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <p class="eyebrow">CORREAS Y BRAZALETES DE CUERO</p>
-          <h1 id="hero-title">Desde 1987, siguiendo un legado familiar en la confección de correas.</h1>
-          <p class="hero-intro">Cuero auténtico vacuno para relojes. Consultá colores, medidas y disponibilidad de cada modelo.</p>
+          <p class="eyebrow" data-i18n="hero.eyebrow">CORREAS Y BRAZALETES DE CUERO</p>
+          <h1 id="hero-title" data-i18n="hero.title">Desde 1987, siguiendo un legado familiar en la confección de correas.</h1>
+          <p class="hero-intro" data-i18n="hero.intro">Cuero auténtico vacuno para relojes. Consultá colores, medidas y disponibilidad de cada modelo.</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="#catalogo">Ver modelos</a>
-            <a class="text-link" href="#experiencia">Conocé la historia <span aria-hidden="true">↓</span></a>
+            <a class="button button-primary" href="#catalogo" data-i18n="catalog.viewModels">Ver modelos</a>
+            <a class="text-link" href="#experiencia"><span data-i18n="hero.story">Conocé la historia</span> <span aria-hidden="true">↓</span></a>
           </div>
         </div>
         <figure class="hero-photo">
           <img src="assets/evidence/exhibidor-20-correas.jpg" alt="Exhibidor con correas de cuero" />
-          <figcaption>“Box para 20 brazaletes / correas, la forma más elegante y vistosa de presentar las correas de reloj.”</figcaption>
+          <figcaption data-i18n="hero.caption">“Box para 20 brazaletes / correas, la forma más elegante y vistosa de presentar las correas de reloj.”</figcaption>
         </figure>
       </section>
 
       <section class="promise" aria-label="Valores del taller">
-        <p><strong>CUERO AUTÉNTICO</strong><span>“Cuero al frente y cuero al dorso.”</span></p>
-        <p><strong>MÁS DE 40 TONOS</strong><span>“¿Qué colores buscás? Fabricamos más de 40 tonos.”</span></p>
-        <p><strong>MEDIDAS A CONSULTAR</strong><span>“Todos los colores, todas las medidas, todo en cuero auténtico.”</span></p>
+        <p><strong data-i18n="promise.leather.title">CUERO AUTÉNTICO</strong><span data-i18n="promise.leather.text">“Cuero al frente y cuero al dorso.”</span></p>
+        <p><strong data-i18n="promise.colors.title">MÁS DE 40 TONOS</strong><span data-i18n="promise.colors.text">“¿Qué colores buscás? Fabricamos más de 40 tonos.”</span></p>
+        <p><strong data-i18n="promise.sizes.title">MEDIDAS A CONSULTAR</strong><span data-i18n="promise.sizes.text">“Todos los colores, todas las medidas, todo en cuero auténtico.”</span></p>
       </section>
 
       <section class="catalog-section" id="catalogo" aria-labelledby="catalogo-title">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">CATÁLOGO</p>
-            <h2 id="catalogo-title">Elegí los modelos que querés consultar.</h2>
+            <p class="eyebrow" data-i18n="catalog.eyebrow">CATÁLOGO</p>
+            <h2 id="catalogo-title" data-i18n="catalog.title">Elegí los modelos que querés consultar.</h2>
           </div>
-          <p>Para cada modelo, consultá directamente precio, color, medida y disponibilidad.</p>
+          <p data-i18n="catalog.intro">Para cada modelo, consultá directamente precio, color, medida y disponibilidad.</p>
         </div>
         <div class="filters" aria-label="Filtrar modelos">
-          <button class="filter is-active" type="button" data-filter="all">Todos</button>
-          <button class="filter" type="button" data-filter="acolchadas">Acolchadas</button>
-          <button class="filter" type="button" data-filter="planas">Planas</button>
-          <button class="filter" type="button" data-filter="texturadas">Texturadas</button>
-          <button class="filter" type="button" data-filter="especiales">Especiales</button>
-          <button class="filter" type="button" data-filter="cierres">Cierres</button>
+          <button class="filter is-active" type="button" data-filter="all" data-i18n="filter.all">Todos</button>
+          <button class="filter" type="button" data-filter="acolchadas" data-i18n="filter.acolchadas">Acolchadas</button>
+          <button class="filter" type="button" data-filter="planas" data-i18n="filter.planas">Planas</button>
+          <button class="filter" type="button" data-filter="texturadas" data-i18n="filter.texturadas">Texturadas</button>
+          <button class="filter" type="button" data-filter="especiales" data-i18n="filter.especiales">Especiales</button>
+          <button class="filter" type="button" data-filter="cierres" data-i18n="filter.cierres">Cierres</button>
         </div>
         <div class="catalog-grid" id="catalog-grid" aria-live="polite"></div>
       </section>
 
       <section class="experience" id="experiencia" aria-labelledby="experience-title">
         <div class="experience-copy">
-          <p class="eyebrow">UN OFICIO, MUCHOS DESTINOS</p>
-          <h2 id="experience-title">Casi cuatro décadas de oficio detrás de cada correa.</h2>
-          <p>“Desde 1987, haciendo honor y tomando la posta del legado familiar en la confección de correas y brazaletes de cuero auténtico para relojes.”</p>
+          <p class="eyebrow" data-i18n="experience.eyebrow">UN OFICIO, MUCHOS DESTINOS</p>
+          <h2 id="experience-title" data-i18n="experience.title">Casi cuatro décadas de oficio detrás de cada correa.</h2>
+          <p data-i18n="experience.body">“Desde 1987, haciendo honor y tomando la posta del legado familiar en la confección de correas y brazaletes de cuero auténtico para relojes.”</p>
         </div>
         <div class="experience-showcase">
           <figure class="world-map">
             <img src="assets/evidence/world-map-base.svg" alt="Mapa mundial con Argentina, Brasil, República Dominicana, Panamá, Colombia, Chile y España resaltados" />
-            <figcaption>Desde Argentina, ya llegamos a Brasil, República Dominicana, Panamá, Colombia, Chile y España. Y podemos enviar tu pedido a cualquier parte del mundo.</figcaption>
+            <figcaption data-i18n="map.caption">Desde Argentina, ya llegamos a Brasil, República Dominicana, Panamá, Colombia, Chile y España. Y podemos enviar tu pedido a cualquier parte del mundo.</figcaption>
           </figure>
           <figure class="client-commercial">
             <video controls preload="metadata" src="assets/evidence/cliente-republica-dominicana.mp4">Tu navegador no puede reproducir este video.</video>
-            <figcaption>Comercial compartido por un cliente de República Dominicana.</figcaption>
+            <figcaption data-i18n="commercial.caption">Comercial compartido por un cliente de República Dominicana.</figcaption>
           </figure>
         </div>
         <div class="shipping-stories" aria-label="Envíos y experiencias compartidos por Víctor">
           <figure class="shipping-story origin-story">
             <img src="assets/evidence/origen-argentina.jpg" alt="Dibujo compartido por Víctor con el mensaje Desde Argentina" />
-            <figcaption>Desde Argentina, confeccionando correas de cuero para llegar cada vez más lejos.</figcaption>
+            <figcaption data-i18n="story.origin">Desde Argentina, confeccionando correas de cuero para llegar cada vez más lejos.</figcaption>
           </figure>
           <figure class="shipping-story testimonial-story">
             <img src="assets/evidence/testimonio-cliente.jpg" alt="Mensaje de un cliente que recibió su pedido" />
-            <figcaption>“Hola Víctor. Ya llegó el pedido. Nuevamente felicitaciones por la calidad de lo que hacés.”</figcaption>
+            <figcaption data-i18n="story.testimonial">“Hola Víctor. Ya llegó el pedido. Nuevamente felicitaciones por la calidad de lo que hacés.”</figcaption>
           </figure>
           <figure class="shipping-story">
             <img src="assets/evidence/envio-bogota.jpg" alt="Pedido de correas camino a Bogotá, Colombia" />
-            <figcaption>“Nuestras correas también están camino a Bogotá, Colombia. Gracias por confiar en nuestro trabajo.”</figcaption>
+            <figcaption data-i18n="story.bogota">“Nuestras correas también están camino a Bogotá, Colombia. Gracias por confiar en nuestro trabajo.”</figcaption>
           </figure>
           <figure class="shipping-story">
             <img src="assets/evidence/envio-chile.jpg" alt="Envío de correas a Chile" />
-            <figcaption>“Nuevamente yendo para Chile. Gracias, vecinos, por confiar en nuestro trabajo.”</figcaption>
+            <figcaption data-i18n="story.chile">“Nuevamente yendo para Chile. Gracias, vecinos, por confiar en nuestro trabajo.”</figcaption>
           </figure>
           <figure class="shipping-story">
             <img src="assets/evidence/envio-panama.jpg" alt="Envío de correas a Panamá" />
-            <figcaption>“Panamá, allá vamos nuevamente. Gracias por la reposición de nuestros productos.”</figcaption>
+            <figcaption data-i18n="story.panama">“Panamá, allá vamos nuevamente. Gracias por la reposición de nuestros productos.”</figcaption>
           </figure>
           <figure class="shipping-story">
             <img src="assets/evidence/envio-sao-paulo.jpg" alt="Envío de correas camino a São Paulo, Brasil" />
-            <figcaption>“São Paulo, Brasil: allá vamos.”</figcaption>
+            <figcaption data-i18n="story.brazil">“São Paulo, Brasil: allá vamos.”</figcaption>
           </figure>
           <figure class="shipping-story">
             <img src="assets/evidence/envio-malaga.jpg" alt="Envío de correas a Málaga, España" />
-            <figcaption>“Abriendo mares: nuestras correas y pulsos están yendo para Málaga, España.”</figcaption>
+            <figcaption data-i18n="story.spain">“Abriendo mares: nuestras correas y pulsos están yendo para Málaga, España.”</figcaption>
           </figure>
         </div>
       </section>
     </main>
 
     <button class="floating-cart" id="floating-cart" type="button" aria-controls="consulta" aria-expanded="false">
-      <span aria-hidden="true">▣</span> Consulta <span class="cart-count" id="floating-cart-count">0</span>
+      <span aria-hidden="true">▣</span> <span data-i18n="cart.consultation">Consulta</span> <span class="cart-count" id="floating-cart-count">0</span>
     </button>
 
     <aside class="consultation" id="consulta" aria-labelledby="consultation-title" hidden>
       <div class="consultation-heading">
         <div>
-          <p class="eyebrow">TU SELECCIÓN</p>
-          <h2 id="consultation-title">Consulta de modelos</h2>
+          <p class="eyebrow" data-i18n="cart.selection">TU SELECCIÓN</p>
+          <h2 id="consultation-title" data-i18n="cart.title">Consulta de modelos</h2>
         </div>
-        <div><span class="cart-count" id="cart-count" aria-live="polite">0</span><button class="close-cart" id="close-cart" type="button" aria-label="Cerrar consulta">×</button></div>
+        <div><span class="cart-count" id="cart-count" aria-live="polite">0</span><button class="close-cart" id="close-cart" type="button" data-i18n-aria-label="cart.close" aria-label="Cerrar consulta">×</button></div>
       </div>
-      <p class="empty-cart" id="empty-cart">Todavía no agregaste modelos.</p>
+      <p class="empty-cart" id="empty-cart" data-i18n="cart.empty">Todavía no agregaste modelos.</p>
       <ul class="cart-items" id="cart-items"></ul>
-      <button class="button button-dark" id="whatsapp-button" type="button" disabled>Consultar por WhatsApp <span aria-hidden="true">↗</span></button>
+      <button class="button button-dark" id="whatsapp-button" type="button" disabled><span data-i18n="cart.whatsapp">Consultar por WhatsApp</span> <span aria-hidden="true">↗</span></button>
     </aside>
 
     <dialog class="gallery-dialog" id="gallery-dialog" aria-labelledby="gallery-title">
       <div class="gallery-dialog-header">
-        <div><p class="eyebrow">MODELO</p><h2 id="gallery-title"></h2></div>
-        <button class="gallery-close" type="button" aria-label="Cerrar galería">×</button>
+        <div><p class="eyebrow" data-i18n="gallery.model">MODELO</p><h2 id="gallery-title"></h2></div>
+        <button class="gallery-close" type="button" data-i18n-aria-label="gallery.close" aria-label="Cerrar galería">×</button>
       </div>
       <div class="gallery-stage" id="gallery-stage"></div>
       <div class="gallery-thumbnails" id="gallery-thumbnails" aria-label="Elegir foto o video"></div>
@@ -144,8 +151,8 @@
     <p class="toast" id="toast" role="status" aria-live="polite"></p>
 
     <footer>
-      <p>Víctor Lanza · Correas de cuero vacuno</p>
-      <a href="#inicio">Volver arriba ↑</a>
+      <p data-i18n="footer.brand">Víctor Lanza · Correas de cuero vacuno</p>
+      <a href="#inicio"><span data-i18n="footer.top">Volver arriba</span> ↑</a>
     </footer>
   </body>
 </html>
