@@ -1,4 +1,9 @@
-const { buildWhatsAppUrl, products, removeFromCart, toggleCart } = globalThis.catalogStore;
+import { loadPublishedCatalogue, loadPublishedSiteContent, loadPublishedSiteMedia } from './content-api.js';
+import { hydratePublicCatalogue, publishedSiteSections, remoteRecordToProduct } from './public-content.js';
+import { localizeSiteContent } from './site-content-model.js';
+import { defaultCategories } from './editor-category-form.js';
+
+const { buildWhatsAppUrl, products: fallbackProducts, removeFromCart, toggleCart } = globalThis.catalogStore;
 const { getProductText, getText, supportedLanguages } = globalThis.i18nStore;
 
 const catalogGrid = document.querySelector('#catalog-grid');
@@ -18,12 +23,17 @@ const galleryStage = document.querySelector('#gallery-stage');
 const galleryThumbnails = document.querySelector('#gallery-thumbnails');
 const galleryClose = document.querySelector('.gallery-close');
 const toast = document.querySelector('#toast');
-const filters = [...document.querySelectorAll('[data-filter]')];
+const filtersContainer = document.querySelector('.filters');
+let filters = [];
 const languageButtons = [...document.querySelectorAll('[data-language]')];
 const whatsappNumber = document.body.dataset.whatsappPhone;
 
 let selectedFilter = 'all';
 let cart = [];
+let products = [...fallbackProducts];
+let remoteRecords = [];
+let remoteSiteSections = [];
+let categories = defaultCategories();
 let activeGalleryProduct = null;
 let activeGalleryIndex = 0;
 let toastTimeout;
@@ -37,6 +47,34 @@ function t(key) {
 
 function localizedProduct(product, field) {
   return getProductText(language, product.id, field) ?? product[field];
+}
+
+function categoryLabel(categoryId) {
+  const category = categories.find((item) => item.id === categoryId);
+  const locale = language === 'pt-BR' ? 'ptBR' : language;
+  return category?.name?.[locale] || category?.name?.es || t(`category.${categoryId}`);
+}
+
+function renderFilters() {
+  filtersContainer.innerHTML = '';
+  const all = [{ id: 'all', name: { es: t('filter.all') } }, ...categories];
+  all.forEach((category) => {
+    const button = document.createElement('button');
+    button.className = `filter${selectedFilter === category.id ? ' is-active' : ''}`;
+    button.type = 'button'; button.dataset.filter = category.id;
+    button.textContent = category.id === 'all' ? t('filter.all') : categoryLabel(category.id);
+    button.addEventListener('click', () => { selectedFilter = category.id; renderFilters(); renderCatalog(); });
+    filtersContainer.append(button);
+  });
+  filters = [...filtersContainer.querySelectorAll('[data-filter]')];
+  document.dispatchEvent(new Event('catalog:filters-rendered'));
+}
+
+function productsWithRemoteOverrides() {
+  if (!remoteRecords.length) return [...fallbackProducts];
+  const remoteProducts = remoteRecords.map((record) => remoteRecordToProduct(record, language));
+  const overridden = new Set(remoteProducts.map((product) => product.id));
+  return [...fallbackProducts.filter((product) => !overridden.has(product.id)), ...remoteProducts];
 }
 
 function renderStaticCopy() {
@@ -55,9 +93,24 @@ function renderStaticCopy() {
     button.classList.toggle('is-active', selected);
     button.setAttribute('aria-pressed', String(selected));
   });
+  remoteSiteSections.forEach((section) => {
+    const fields = localizeSiteContent(section, language);
+    Object.entries(fields).forEach(([field, value]) => {
+      if (section.section === 'copy') {
+        const locale = language === 'pt-BR' ? 'pt-BR' : language;
+        if (globalThis.i18nStore.copy[locale]) globalThis.i18nStore.copy[locale][field] = value;
+        const copyTarget = document.querySelector(`[data-i18n="${CSS.escape(field)}"]`);
+        if (copyTarget && value) copyTarget.textContent = value;
+        return;
+      }
+      const target = document.querySelector(`[data-site-field="${section.section}.${field}"]`);
+      if (target && value) target.textContent = value;
+    });
+  });
 }
 
 function galleryMedia(product) {
+  if (product.media) return product.media.map((item) => ({ type: item.type, src: item.url }));
   const photos = product.gallery.map((file) => ({ type: 'image', src: `assets/gallery/${file}` }));
   return product.video ? [...photos, { type: 'video', src: `assets/gallery/${product.video}` }] : photos;
 }
@@ -72,7 +125,7 @@ function productCard(product) {
         <span>${mediaCount} ${mediaCount === 1 ? t('product.view') : t('product.views')} · ${t('product.gallery')}</span>
       </button>
       <div class="product-content">
-        <p class="product-category">${t(`category.${product.category}`)}</p>
+        <p class="product-category">${categoryLabel(product.category)}</p>
         <h3>${product.name}</h3>
         <p>${localizedProduct(product, 'description')}</p>
         <button class="add-button${isSelected ? ' is-selected' : ''}" type="button" data-add-product="${product.id}">${isSelected ? t('product.added') : t('product.add')} <span aria-hidden="true">${isSelected ? '✓' : '+'}</span></button>
@@ -82,6 +135,7 @@ function productCard(product) {
 }
 
 function renderCatalog() {
+  if (selectedFilter !== 'all' && !categories.some((category) => category.id === selectedFilter)) selectedFilter = 'all';
   const visibleProducts = selectedFilter === 'all'
     ? products
     : products.filter((product) => product.category === selectedFilter);
@@ -183,14 +237,6 @@ galleryDialog.addEventListener('click', (event) => {
   if (event.target === galleryDialog) galleryDialog.close();
 });
 
-filters.forEach((filter) => {
-  filter.addEventListener('click', () => {
-    selectedFilter = filter.dataset.filter;
-    filters.forEach((item) => item.classList.toggle('is-active', item === filter));
-    renderCatalog();
-  });
-});
-
 [floatingCart, headerCart].forEach((button) => button.addEventListener('click', openCart));
 closeCart.addEventListener('click', closeCartDrawer);
 
@@ -203,7 +249,12 @@ languageButtons.forEach((button) => {
   button.addEventListener('click', () => {
     language = button.dataset.language;
     localStorage.setItem('victor-lanza-language', language);
+    if (remoteRecords.length) {
+      products = productsWithRemoteOverrides();
+      cart = cart.map((item) => products.find((product) => product.id === item.id) ?? item);
+    }
     renderStaticCopy();
+    renderFilters();
     renderCatalog();
     renderCart();
     if (activeGalleryProduct) renderGallery();
@@ -211,5 +262,45 @@ languageButtons.forEach((button) => {
 });
 
 renderStaticCopy();
+renderFilters();
 renderCatalog();
 renderCart();
+
+globalThis.catalogEditorBridge = {
+  getProducts: () => products.map((product) => ({ ...product })),
+  updateProduct: (id, changes) => {
+    products = products.map((product) => product.id === id ? { ...product, ...changes } : product);
+    cart = cart.map((item) => products.find((product) => product.id === item.id) ?? item);
+    renderCatalog();
+    renderCart();
+  },
+  addProduct: (product) => { products = [...products, product]; renderCatalog(); },
+  getCategories: () => categories.map((category) => structuredClone(category)),
+  setCategories: (next) => { categories = next.map((category) => structuredClone(category)); renderFilters(); renderCatalog(); },
+  render: () => { renderStaticCopy(); renderFilters(); renderCatalog(); renderCart(); },
+};
+
+hydratePublicCatalogue(fallbackProducts, loadPublishedCatalogue).then((loaded) => {
+  if (!loaded.length || !loaded[0]?.published) return;
+  remoteRecords = loaded;
+  products = productsWithRemoteOverrides();
+  cart = cart.map((item) => products.find((product) => product.id === item.id) ?? item);
+  renderCatalog();
+  renderCart();
+});
+
+loadPublishedSiteContent().then((loaded) => {
+  remoteSiteSections = publishedSiteSections(loaded);
+  const categorySection = remoteSiteSections.find((section) => section.section === 'categories');
+  if (Array.isArray(categorySection?.published?.items) && categorySection.published.items.length) categories = categorySection.published.items;
+  if (remoteSiteSections.length) renderStaticCopy();
+  renderFilters();
+  renderCatalog();
+});
+
+loadPublishedSiteMedia().then((media) => {
+  media.forEach((item) => {
+    const target = document.querySelector(`[data-editor-media="${CSS.escape(item.slot)}"]`);
+    if (target && item.url) target.src = item.url;
+  });
+});
